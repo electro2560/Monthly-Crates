@@ -99,11 +99,11 @@ public class CrateContentInventory implements MGUI {
             }, 1);
         } else {
             if (CrateAPI.getInstance().availableSlots(p.getInventory()) < 10) {
-                Arrays.stream(normalItemSlots).forEach(slot -> p.getWorld().dropItemNaturally(p.getLocation(), e.getInventory().getItem(slot)));
-                p.getWorld().dropItemNaturally(p.getLocation(), e.getInventory().getItem(49));
+                Arrays.stream(normalItemSlots).forEach(slot -> p.getWorld().dropItemNaturally(p.getLocation(), e.getInventory().getItem(slot).clone()));
+                p.getWorld().dropItemNaturally(p.getLocation(), e.getInventory().getItem(49).clone());
             } else {
-                Arrays.stream(normalItemSlots).forEach(slot -> p.getInventory().addItem(e.getInventory().getItem(slot)));
-                p.getInventory().addItem(e.getInventory().getItem(49));
+                Arrays.stream(normalItemSlots).forEach(slot -> p.getInventory().addItem(e.getInventory().getItem(slot).clone()));
+                p.getInventory().addItem(e.getInventory().getItem(49).clone());
             }
             p.playSound(p.getLocation(), Sounds.valueOf(Core.getInstance().getConfig().getString("sounds.close").toUpperCase()).bukkitSound(), 1.0f, 1.0f);
             inventories.remove(p.getUniqueId());

@@ -3,6 +3,7 @@ package com.shadebyte.monthlycrates.utils;
 import com.shadebyte.monthlycrates.Core;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -84,10 +85,14 @@ public class Serializer {
 
             dataOutput.writeInt(items.size());
             for (ItemStack item : items) {
-                dataOutput.writeObject(item);
+                if(item == null) continue;
+               try {
+                   dataOutput.writeObject(item);
+               }catch (Exception e) {}
             }
             dataOutput.close();
-            return Base64Coder.encodeLines(outputStream.toByteArray());
+            //return Base64Coder.encodeLines(outputStream.toByteArray());
+            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
         } catch (Exception e) {
             throw new IllegalStateException("Unable to save item stacks.", e);
         }
@@ -97,19 +102,18 @@ public class Serializer {
         if (data == null || data.equals(""))
             return null;
 
-        try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
             List<ItemStack> items = new ArrayList<>();
 
             int size = dataInput.readInt();
             for (int i = 0; i < size; i++) {
-                items.add((ItemStack) dataInput.readObject());
+                try {
+                    items.add((ItemStack) dataInput.readObject());
+                }catch(Exception e) {}
+
             }
             dataInput.close();
             return items;
-        } catch (ClassNotFoundException e) {
-            throw new IOException("Unable to decode class type.", e);
         }
-    }
 }
